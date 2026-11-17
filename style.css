@@ -6,6 +6,7 @@
 .auth-card label{display:block;margin:14px 0 6px;font-size:13px;font-weight:700}.auth-card label small{color:var(--muted);font-weight:400}
 .auth-card input{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--text);font-size:16px}
 .auth-card .primary-btn{width:100%;margin-top:18px}.auth-actions{display:flex;justify-content:space-between;gap:12px;margin-top:12px}
+.auth-demo-btn{width:100%;margin-top:10px}
 .text-btn{padding:7px 0;border:0;background:transparent;color:var(--green);font-size:13px;font-weight:700}
 .auth-feedback,.auth-config-warning{min-height:18px;margin-top:12px;color:var(--muted);font-size:12px;line-height:1.5;text-align:center}
 .auth-feedback.error,.auth-config-warning{color:#bd3434}

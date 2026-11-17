@@ -24,6 +24,9 @@ if(!onlineMode){try{data=JSON.parse(localStorage.getItem(KEY)||"null")}catch{dat
 if(onlineMode)data={chats:[],statuses:[],calls:[],groups:[],profile:"JURO User",dark:false};
 else if(!data||!Array.isArray(data.chats))data={chats:seed(),statuses:[],calls:[],profile:"JURO User",dark:false};
 data.statuses=data.statuses||[];data.calls=data.calls||[];data.groups=data.groups||[];data.profile=data.profile||"JURO User";
+data.chats.forEach(chat=>chat.messages.forEach(message=>{
+ if(Array.isArray(message.reactions)&&message.reactions.length>1)message.reactions=[message.reactions[message.reactions.length-1]];
+}));
 let recording=null, recordingChunks=[],installPrompt=null;
 let activeId=null,filter="all",contactMode="chat",toastTimer;
 const save=()=>{if(onlineMode)return true;try{localStorage.setItem(KEY,JSON.stringify(data));return true}catch{toast("Browser storage is full; changes may not be saved.");return false}};
@@ -166,7 +169,7 @@ function renderMessages(){
    const react=document.createElement("button");react.className="tiny-btn";react.type="button";react.textContent="☺ React";react.onclick=()=>{
     const old=bubble.querySelector(".reaction-picker");if(old){old.remove();return}
     const picker=document.createElement("div");picker.className="reaction-picker";
-    REACTIONS.forEach(emoji=>{const x=document.createElement("button");x.type="button";x.textContent=emoji;x.onclick=()=>{m.reactions=m.reactions||[];if(!m.reactions.includes(emoji))m.reactions.push(emoji);save();renderMessages()};picker.append(x)});bubble.append(picker);
+    REACTIONS.forEach(emoji=>{const x=document.createElement("button");x.type="button";x.textContent=emoji;x.onclick=()=>{m.reactions=[emoji];save();renderMessages()};picker.append(x)});bubble.append(picker);
    };
    const del=document.createElement("button");del.className="tiny-btn danger-text";del.type="button";del.textContent="🗑 Delete";del.onclick=()=>{
     if(!confirm("Delete this message?"))return;c.messages=c.messages.filter(x=>x.id!==m.id);const saved=save();renderMessages();renderChats();if(saved)toast("Message deleted.");
@@ -429,7 +432,16 @@ async function handleOnlineSession(session){
  applySettings();await loadRemoteChats();subscribeToChatList();subscribeToMessages();
 }
 function setupOnlineMode(){
- if(!onlineMode)return;
+ if(!onlineMode){
+  $("#app").hidden=true;$("#authGate").hidden=false;
+  const warning=$("#authConfigWarning");
+  warning.hidden=false;
+  warning.textContent="Phone sign-in is not configured yet. Add your Supabase project URL and public anon key to supabase-config.js to enable SMS verification.";
+  $("#sendOtpBtn").disabled=true;
+  $("#demoModeBtn").hidden=false;
+  $("#demoModeBtn").onclick=()=>{$("#authGate").hidden=true;$("#app").hidden=false};
+  return;
+ }
  document.querySelectorAll('[data-page="status"],[data-page="calls"]').forEach(button=>button.hidden=true);
  $(".main-nav").style.gridTemplateColumns="repeat(4,minmax(0,1fr))";
  $("#startAudio").hidden=true;$("#startVideo").hidden=true;$("#audioCallBtn").hidden=true;$("#videoCallBtn").hidden=true;

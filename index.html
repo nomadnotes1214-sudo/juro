@@ -21,8 +21,8 @@
 <main class="auth-screen" id="authGate" hidden>
   <section class="auth-card">
     <div class="big-logo">JURO</div>
-    <h1>Sign in with your phone</h1>
-    <p class="auth-intro">Your phone number becomes your JURO ID. We’ll text you a verification code.</p>
+    <h1>Create an account or sign in</h1>
+    <p class="auth-intro">Use your phone number as your JURO ID. We’ll text you a verification code.</p>
     <form id="phoneAuthForm">
       <label for="authDisplayName">Name <small>(for new accounts)</small></label>
       <input id="authDisplayName" maxlength="60" autocomplete="name" placeholder="Your name">
@@ -42,6 +42,7 @@
     </form>
     <p class="auth-feedback" id="authFeedback" role="status" aria-live="polite"></p>
     <p class="auth-config-warning" id="authConfigWarning" hidden></p>
+    <button class="secondary-btn auth-demo-btn" id="demoModeBtn" type="button" hidden>Continue with local demo</button>
   </section>
 </main>
 <div class="app" id="app">
