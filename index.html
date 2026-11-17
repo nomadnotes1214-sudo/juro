@@ -4,7 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#075e46">
+<meta name="description" content="JURO keeps your conversations, contacts, and updates together.">
 <title>JURO — Stay Connected</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
 <link rel="stylesheet" href="style.css">
 <script src="script.js" defer></script>
 </head>
@@ -84,6 +87,7 @@
         <div class="setting-row"><div><b>Profile name</b><p id="profileNameLabel">JURO User</p></div><button class="secondary-btn" id="editProfile">Edit</button></div>
         <div class="setting-row"><div><b>Dark theme</b><p>Switch between light and dark appearance.</p></div><label class="switch"><input type="checkbox" id="darkToggle"><span></span></label></div>
         <div class="setting-row"><div><b>Desktop notifications</b><p>Allow browser notifications (if supported).</p></div><button class="secondary-btn" id="notificationBtn">Enable</button></div>
+        <div class="setting-row" id="installAppRow" hidden><div><b>Install JURO</b><p>Add JURO to your device for quick access.</p></div><button class="secondary-btn" id="installAppBtn">Install</button></div>
         <div class="setting-row"><div><b>Screen recording</b><p>Record a screen or window after browser permission.</p></div><button class="secondary-btn" id="recordScreenBtn">Start recording</button></div>
         <div id="recordingPanel" class="recording-panel" hidden><span id="recordingState">Recording…</span><button class="secondary-btn" id="stopRecordingBtn">Stop & save</button></div>
         <div class="setting-row"><div><b>Storage</b><p>Chats and settings are saved on this browser.</p></div><button class="secondary-btn danger-text" id="clearData">Clear demo data</button></div>

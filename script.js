@@ -14,7 +14,7 @@ let data;
 try{data=JSON.parse(localStorage.getItem(KEY)||"null")}catch{data=null}
 if(!data||!Array.isArray(data.chats))data={chats:seed(),statuses:[],calls:[],profile:"JURO User",dark:false};
 data.statuses=data.statuses||[];data.calls=data.calls||[];data.groups=data.groups||[];data.profile=data.profile||"JURO User";
-let recording=null, recordingChunks=[];
+let recording=null, recordingChunks=[],installPrompt=null;
 let activeId=null,filter="all",contactMode="chat",toastTimer;
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(data));return true}catch{toast("Browser storage is full; changes may not be saved.");return false}};
 const initials=s=>s.trim().split(/\s+/).slice(0,2).map(x=>x[0]||"").join("").toUpperCase();
@@ -183,6 +183,32 @@ function startCall(kind,contact){
  data.calls.push({id:makeId(),name:c.name,kind,time:now()});save();renderCalls();
 }
 function endCall(){$("#callModal").hidden=true;toast("Demo call ended.")}
+function setupInstall(){
+ const installRow=$("#installAppRow"),installButton=$("#installAppBtn");
+ window.addEventListener("beforeinstallprompt",event=>{
+  event.preventDefault();installPrompt=event;installRow.hidden=false;
+ });
+ window.addEventListener("appinstalled",()=>{
+  installPrompt=null;installRow.hidden=true;toast("JURO was installed.");
+ });
+ installButton.onclick=async()=>{
+  if(!installPrompt)return;
+  const promptEvent=installPrompt;installPrompt=null;installRow.hidden=true;
+  try{
+   await promptEvent.prompt();
+   const choice=await promptEvent.userChoice;
+   if(choice.outcome==="dismissed")toast("JURO installation was cancelled.");
+  }catch(error){
+   console.error("Could not install JURO.",error);
+   toast("Could not start installation. Try Chrome's menu to install JURO.");
+  }
+ };
+ if("serviceWorker"in navigator&&window.isSecureContext){
+  navigator.serviceWorker.register("./service-worker.js").catch(error=>{
+   console.error("Could not register the JURO service worker.",error);
+  });
+ }
+}
 function applySettings(){$("body").classList.toggle("dark",!!data.dark);$("#darkToggle").checked=!!data.dark;$("#profileNameLabel").textContent=data.profile}
 function setup(){
  document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>switchPage(b.dataset.page));
@@ -207,6 +233,7 @@ function setup(){
  $("#modalBg").onclick=e=>{if(e.target.id==="modalBg")closeContact()};
  $("#callModal").onclick=e=>{if(e.target.id==="callModal")endCall()};
  document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeContact();$("#callModal").hidden=true;$("#emojiPicker").hidden=true}});
+ setupInstall();
  applySettings();renderChats();renderStatuses();renderCalls();renderPeople();renderGroups();
 }
 setup();
