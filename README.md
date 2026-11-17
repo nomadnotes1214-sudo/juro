@@ -1,10 +1,20 @@
 # JURO
 
-JURO is a browser-based messaging UI demo with local chats, contacts, groups, status updates, call history, and settings.
+JURO is an installable messaging PWA. Without Supabase configuration it runs as a device-local demo. With Supabase configured it supports phone OTP sign-in and real-time one-to-one/group text chats.
 
 ## Run locally
 
-For normal use, open `index.html` in a modern browser. Data is stored in that browser's local storage; messages and calls are not sent to other devices.
+Serve the folder from `localhost` while developing. Opening `index.html` directly still runs the local demo, but service workers and phone authentication require a secure origin.
+
+## Enable phone sign-in and real chats
+
+1. Create a Supabase project and run [`supabase/schema.sql`](./supabase/schema.sql) in its SQL Editor.
+2. In Supabase Auth, enable Phone sign-in and configure an SMS provider. SMS delivery and billing are controlled by that provider.
+3. Copy the project URL and public anon/publishable key into `supabase-config.js`. Never put a `service_role` key in browser code.
+4. Add the local and deployed HTTPS URLs to Supabase Auth's allowed site/redirect URL settings.
+5. Serve or deploy the folder over HTTPS. Users can register or sign in with their phone, verify the SMS code, and start chats by phone number. Group creation accepts member phone numbers.
+
+The app cannot send real OTPs until a Supabase project and SMS provider are configured. The public anon key is designed for browser use; access to profiles, chats, memberships, and messages is restricted by the schema's row-level security policies.
 
 ## Install from Chrome
 
@@ -12,7 +22,7 @@ JURO is an installable Progressive Web App. To enable installation and offline u
 
 ### Publish the app
 
-Upload this folder, including `manifest.webmanifest`, `service-worker.js`, and `icons/`, to any static web host that provides HTTPS (for example, GitHub Pages, Netlify, or Cloudflare Pages). Then share the host's public URL. Installation is not available from a local `file://` URL.
+Upload this folder, including `manifest.webmanifest`, `service-worker.js`, `supabase-config.js`, and `icons/`, to a static web host that provides HTTPS (for example, GitHub Pages, Netlify, or Cloudflare Pages). Configure `supabase-config.js` before deployment, then share the host's public URL. Installation is not available from a local `file://` URL.
 
 ### Install on phones and computers
 
@@ -20,7 +30,7 @@ Upload this folder, including `manifest.webmanifest`, `service-worker.js`, and `
 - **iPhone/iPad:** Open the HTTPS URL in Safari, tap **Share**, then choose **Add to Home Screen**.
 - **Windows/macOS:** Open the HTTPS URL in a PWA-capable browser such as Chrome or Edge and use its **Install app** option.
 
-JURO includes home-screen icons and standalone display settings. The service worker caches the app shell for offline access. This version is a local demo: each person’s chats and settings stay on that device and are not shared or synced.
+JURO includes home-screen icons and standalone display settings. The service worker caches the app shell for offline access. In demo mode, data stays on the device; in Supabase mode, text chats are shared between authenticated users. Voice/video calls, media upload, and WhatsApp interoperability are not included.
 
 ## Files
 
@@ -29,4 +39,6 @@ JURO includes home-screen icons and standalone display settings. The service wor
 - `script.js` — demo interactions and local storage
 - `manifest.webmanifest` — app name, icons, and install display settings
 - `service-worker.js` — offline app-shell caching
+- `supabase-config.js` — public Supabase URL and anon-key placeholders
+- `supabase/schema.sql` — profiles, chats, RLS policies, and chat RPCs
 - `icons/` — app icons used by Chrome

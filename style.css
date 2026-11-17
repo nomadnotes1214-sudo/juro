@@ -1,5 +1,14 @@
 *{margin:0;padding:0;box-sizing:border-box}
 :root{font-family:Arial,Helvetica,sans-serif;color:#172b24;background:#e9efec;--green:#087653;--deep:#075e46;--surface:#fff;--soft:#f4f8f5;--line:#e6ece9;--text:#172b24;--muted:#829189}
+.auth-screen{min-height:100vh;min-height:100dvh;display:grid;place-items:center;padding:24px max(18px,env(safe-area-inset-right)) 24px max(18px,env(safe-area-inset-left));background:var(--soft)}
+.auth-card{width:100%;max-width:430px;padding:28px;border:1px solid var(--line);border-radius:18px;background:var(--surface);color:var(--text);box-shadow:0 12px 40px #0001}
+.auth-card .big-logo{margin:0 auto 18px}.auth-card h1{margin-bottom:9px;color:var(--deep);font-size:23px;text-align:center}.auth-intro{margin:0 0 18px;color:var(--muted);font-size:13px;line-height:1.55;text-align:center}
+.auth-card label{display:block;margin:14px 0 6px;font-size:13px;font-weight:700}.auth-card label small{color:var(--muted);font-weight:400}
+.auth-card input{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--text);font-size:16px}
+.auth-card .primary-btn{width:100%;margin-top:18px}.auth-actions{display:flex;justify-content:space-between;gap:12px;margin-top:12px}
+.text-btn{padding:7px 0;border:0;background:transparent;color:var(--green);font-size:13px;font-weight:700}
+.auth-feedback,.auth-config-warning{min-height:18px;margin-top:12px;color:var(--muted);font-size:12px;line-height:1.5;text-align:center}
+.auth-feedback.error,.auth-config-warning{color:#bd3434}
 body{min-height:100vh;min-height:100dvh}button,input{font:inherit}button{cursor:pointer}[hidden]{display:none!important}
 .app{height:100vh;height:100dvh;max-width:1600px;margin:auto;display:flex;overflow:hidden;background:var(--surface);box-shadow:0 5px 35px #0002}
 .sidebar{position:relative;width:340px;min-width:290px;display:flex;flex-direction:column;background:var(--surface);border-right:1px solid var(--line)}
@@ -58,6 +67,7 @@ body{min-height:100vh;min-height:100dvh}button,input{font:inherit}button{cursor:
 .call-modal{text-align:center}.call-avatar{width:85px;height:85px;display:grid;place-items:center;margin:12px auto;border-radius:50%;background:#d9eee4;color:var(--green);font-size:30px;font-weight:bold}.call-modal p{margin-top:7px;color:var(--muted);font-size:13px}.call-warning{margin:16px 0!important;padding:10px;border-radius:8px;background:#fff5df;color:#805c17!important}.call-screen{margin:15px 0;padding:35px 10px;border-radius:12px;background:#263a32;color:white;font-size:35px}.call-screen small{font-size:12px}.end-call{margin-top:12px;padding:12px 28px;border:0;border-radius:24px;background:#d93030;color:white;font-weight:bold}
 .empty{padding:25px;color:var(--muted);font-size:13px;text-align:center}.toast{position:fixed;z-index:30;right:18px;bottom:18px;padding:11px 15px;border-radius:9px;background:#173d30;color:white;font-size:13px;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translateY(0)}
 body.dark{--surface:#17231e;--soft:#101a15;--line:#2a3931;--text:#e6eee9;--muted:#a0b0a7;background:#101a15;color:var(--text)}body.dark .chat-item{color:var(--text)}body.dark .chat-item:hover,body.dark .chat-item.selected,body.dark .nav-btn.active{background:#243b30}body.dark .tab{background:var(--surface);color:#a0b0a7}body.dark .tab.active{color:#69c99f}body.dark .received{background:#26372e;color:#e6eee9}body.dark .sent{background:#24553d;color:#effff4}body.dark .status-avatar{color:#69c99f}body.dark .welcome h1,body.dark .page-heading h1,body.dark .section-title{color:#8bd8b2}
+body.dark .auth-card h1{color:#8bd8b2}
 @media(max-width:700px){.sidebar{width:100%;min-width:0}.main{display:none;width:100%}.app.mobile-page-open .sidebar{display:none}.app.mobile-page-open .main{display:flex}.main-nav{grid-template-columns:repeat(5,1fr)}.back-btn{display:grid}.feature-page{padding:20px 15px}.messages{padding:15px}.bubble{max-width:86%}.chat-header{gap:5px;padding:8px}.chat-header .icon-btn{width:34px;height:34px;font-size:17px}.call-actions{grid-template-columns:1fr 1fr}}
 .main-nav{grid-template-columns:repeat(6,minmax(0,1fr))}
 
