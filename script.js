@@ -44,7 +44,7 @@ function switchPage(page){
  activeId=null;$("#app").classList.remove("mobile-page-open");
  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
  document.querySelectorAll(".page").forEach(p=>p.hidden=true);$("#chatView").hidden=true;
- const target=$("#"+page+"Page");if(target)target.hidden=false;
+ const target=page==="chats"?$("#welcomePage"):$("#"+page+"Page");if(target)target.hidden=false;
  $("#chatSidebar").hidden=page!=="chats";
  if(page!=="chats")$("#app").classList.add("mobile-page-open");
  if(page==="status")renderStatuses();if(page==="calls")renderCalls();if(page==="people")renderPeople();if(page==="groups")renderGroups();renderChats();
@@ -146,7 +146,7 @@ function stopScreenRecording(){if(recording&&recording.state==="recording")recor
 
 function renderPeople(){
  const q=$("#peopleSearch").value.toLowerCase(),list=$("#peopleList");list.replaceChildren();
- data.chats.filter(c=>`${c.name} ${c.phone}`.toLowerCase().includes(q)).forEach(c=>{
+ data.chats.filter(c=>!c.isGroup&&`${c.name} ${c.phone}`.toLowerCase().includes(q)).forEach(c=>{
   const row=document.createElement("div");row.className="person-item";const av=document.createElement("div");av.className="avatar";av.textContent=initials(c.name);
   const meta=document.createElement("div");meta.className="person-meta";const n=document.createElement("b");n.textContent=c.name;const p=document.createElement("p");p.textContent=c.phone||"No phone number";meta.append(n,p);
   const open=document.createElement("button");open.className="secondary-btn";open.textContent="Message";open.onclick=()=>openChat(c.id);row.append(av,meta,open);list.append(row);
