@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_NAME = "juro-shell-v2";
+const CACHE_NAME = "juro-shell-v3";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -8,7 +8,8 @@ const APP_SHELL = [
   "./script.js",
   "./manifest.webmanifest",
   "./icons/icon-192.png",
-  "./icons/icon-512.png"
+  "./icons/icon-512.png",
+  "./icons/apple-touch-icon.png"
 ];
 
 self.addEventListener("install", event => {

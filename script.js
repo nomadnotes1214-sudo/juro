@@ -185,8 +185,16 @@ function startCall(kind,contact){
 function endCall(){$("#callModal").hidden=true;toast("Demo call ended.")}
 function setupInstall(){
  const installRow=$("#installAppRow"),installButton=$("#installAppBtn");
+ const installHelp=$("#installAppHelp");
+ const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+ const isStandalone=window.matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+ if(isIOS&&!isStandalone){
+  installRow.hidden=false;installButton.hidden=true;
+  installHelp.textContent="Open your browser's Share or menu button and choose Add to Home Screen.";
+ }
  window.addEventListener("beforeinstallprompt",event=>{
-  event.preventDefault();installPrompt=event;installRow.hidden=false;
+  event.preventDefault();installPrompt=event;installRow.hidden=false;installButton.hidden=false;
+  installHelp.textContent="Add JURO to your device for quick access.";
  });
  window.addEventListener("appinstalled",()=>{
   installPrompt=null;installRow.hidden=true;toast("JURO was installed.");

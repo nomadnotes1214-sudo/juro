@@ -10,7 +10,9 @@ For normal use, open `index.html` in a modern browser. Data is stored in that br
 
 JURO is an installable Progressive Web App. To enable installation and offline use, serve this folder from `localhost` while developing or publish it to a site using HTTPS. Opening `index.html` directly as a `file://` URL does not enable Chrome app installation or service workers.
 
-On a supported Chrome browser, open the served site and use Chrome's **Install JURO** option in the address bar or menu. The in-app install button appears in Settings when Chrome makes installation available.
+On Android, open the HTTPS or localhost URL in Chrome and use Chrome's **Install app** option in the address bar or menu. JURO also shows an install button in Settings when Chrome makes installation available.
+
+On iPhone or iPad, open the HTTPS URL in a browser and use its **Share** or menu option, then choose **Add to Home Screen**. JURO includes an Apple home-screen icon and standalone display settings. The install instructions appear in Settings on iOS.
 
 The service worker caches the app shell for offline access. User data remains in the browser's local storage.
 
