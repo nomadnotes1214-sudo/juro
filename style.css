@@ -29,6 +29,7 @@ body{min-height:100vh;min-height:100dvh}button,input{font:inherit}button{cursor:
 .page{flex:1;min-height:0;overflow:auto}.welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:25px;text-align:center;color:#587067}
 .big-logo{width:95px;height:95px;display:grid;place-items:center;margin-bottom:18px;border-radius:28px;background:var(--green);color:#fff;font-size:38px;font-weight:800}
 .welcome h1{margin-bottom:9px;color:var(--deep);font-size:24px}.welcome p{max-width:430px;line-height:1.6}
+.welcome .install-hint{margin-top:10px;color:var(--muted);font-size:12px}
 .primary-btn,.secondary-btn{padding:10px 15px;border:0;border-radius:8px;font-weight:700}.primary-btn{background:var(--green);color:#fff}.primary-btn:hover{background:#056044}.secondary-btn{background:#eaf1ed;color:#385348}.welcome .primary-btn{margin-top:20px}
 .feature-page{padding:28px;max-width:1000px;width:100%;margin:0 auto}.page-heading{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:22px}.page-heading h1{color:var(--deep);font-size:26px}.page-heading p{margin-top:5px;color:var(--muted);font-size:13px}
 .card{padding:18px;border:1px solid var(--line);border-radius:13px;background:var(--surface)}

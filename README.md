@@ -10,11 +10,17 @@ For normal use, open `index.html` in a modern browser. Data is stored in that br
 
 JURO is an installable Progressive Web App. To enable installation and offline use, serve this folder from `localhost` while developing or publish it to a site using HTTPS. Opening `index.html` directly as a `file://` URL does not enable Chrome app installation or service workers.
 
-On Android, open the HTTPS or localhost URL in Chrome and use Chrome's **Install app** option in the address bar or menu. JURO also shows an install button in Settings when Chrome makes installation available.
+### Publish the app
 
-On iPhone or iPad, open the HTTPS URL in a browser and use its **Share** or menu option, then choose **Add to Home Screen**. JURO includes an Apple home-screen icon and standalone display settings. The install instructions appear in Settings on iOS.
+Upload this folder, including `manifest.webmanifest`, `service-worker.js`, and `icons/`, to any static web host that provides HTTPS (for example, GitHub Pages, Netlify, or Cloudflare Pages). Then share the host's public URL. Installation is not available from a local `file://` URL.
 
-The service worker caches the app shell for offline access. User data remains in the browser's local storage.
+### Install on phones and computers
+
+- **Android:** Open the HTTPS URL in Chrome and choose **Install app** from the address bar or menu. JURO also shows an install button when Chrome makes installation available.
+- **iPhone/iPad:** Open the HTTPS URL in Safari, tap **Share**, then choose **Add to Home Screen**.
+- **Windows/macOS:** Open the HTTPS URL in a PWA-capable browser such as Chrome or Edge and use its **Install app** option.
+
+JURO includes home-screen icons and standalone display settings. The service worker caches the app shell for offline access. This version is a local demo: each person’s chats and settings stay on that device and are not shared or synced.
 
 ## Files
 

@@ -185,23 +185,26 @@ function startCall(kind,contact){
 function endCall(){$("#callModal").hidden=true;toast("Demo call ended.")}
 function setupInstall(){
  const installRow=$("#installAppRow"),installButton=$("#installAppBtn");
- const installHelp=$("#installAppHelp");
+ const installHelp=$("#installAppHelp"),welcomeButton=$("#welcomeInstallBtn"),welcomeHint=$("#welcomeInstallHint");
  const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
  const isStandalone=window.matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
  if(isIOS&&!isStandalone){
   installRow.hidden=false;installButton.hidden=true;
-  installHelp.textContent="Open your browser's Share or menu button and choose Add to Home Screen.";
+  installHelp.textContent="Open JURO in Safari, tap Share, then choose Add to Home Screen.";
+  welcomeHint.hidden=false;welcomeHint.textContent="On iPhone or iPad, open JURO in Safari and use Share to add it to your Home Screen.";
  }
  window.addEventListener("beforeinstallprompt",event=>{
   event.preventDefault();installPrompt=event;installRow.hidden=false;installButton.hidden=false;
   installHelp.textContent="Add JURO to your device for quick access.";
+  welcomeButton.hidden=false;welcomeHint.hidden=true;
  });
  window.addEventListener("appinstalled",()=>{
-  installPrompt=null;installRow.hidden=true;toast("JURO was installed.");
+  installPrompt=null;installRow.hidden=true;welcomeButton.hidden=true;welcomeHint.hidden=true;toast("JURO was installed.");
  });
- installButton.onclick=async()=>{
+ const promptInstall=async()=>{
   if(!installPrompt)return;
   const promptEvent=installPrompt;installPrompt=null;installRow.hidden=true;
+  welcomeButton.hidden=true;
   try{
    await promptEvent.prompt();
    const choice=await promptEvent.userChoice;
@@ -211,6 +214,7 @@ function setupInstall(){
    toast("Could not start installation. Try Chrome's menu to install JURO.");
   }
  };
+ installButton.onclick=promptInstall;welcomeButton.onclick=promptInstall;
  if("serviceWorker"in navigator&&window.isSecureContext){
   navigator.serviceWorker.register("./service-worker.js").catch(error=>{
    console.error("Could not register the JURO service worker.",error);
