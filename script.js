@@ -344,7 +344,7 @@ function setupInstall(){
   installPrompt=null;installRow.hidden=true;welcomeButton.hidden=true;welcomeHint.hidden=true;toast("JURO was installed.");
  });
  const promptInstall=async()=>{
-  if(!installPrompt)return;
+  if(!installPrompt){toast("Open your browser menu and choose Install JURO.");return}
   const promptEvent=installPrompt;installPrompt=null;installRow.hidden=true;
   welcomeButton.hidden=true;
   try{
@@ -356,7 +356,8 @@ function setupInstall(){
    toast("Could not start installation. Try Chrome's menu to install JURO.");
   }
  };
- installButton.onclick=promptInstall;welcomeButton.onclick=promptInstall;
+ installButton.addEventListener("click",promptInstall);
+ welcomeButton.addEventListener("click",promptInstall);
  if("serviceWorker"in navigator&&window.isSecureContext){
   navigator.serviceWorker.register("./service-worker.js").catch(error=>{
    console.error("Could not register the JURO service worker.",error);
