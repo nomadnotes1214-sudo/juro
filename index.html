@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#075e46">
+<title>JURO — Stay Connected</title>
+<link rel="stylesheet" href="style.css">
+<script src="script.js" defer></script>
+</head>
+<body>
+<div class="app" id="app">
+  <aside class="sidebar">
+    <header class="brandbar">
+      <div><div class="logo">JURO</div><small>Stay Connected. Stay Together.</small></div>
+      <div class="brand-actions">
+        <button class="icon-btn light" id="newGroupBtn" title="Create group">👥</button>
+        <button class="icon-btn light" id="newChatBtn" title="New chat">＋</button>
+      </div>
+    </header>
+
+    <nav class="main-nav" aria-label="Main navigation">
+      <button class="nav-btn active" data-page="chats"><span>💬</span> Chats <b id="chatCount"></b></button>
+      <button class="nav-btn" data-page="status"><span>🟢</span> Status</button>
+      <button class="nav-btn" data-page="calls"><span>📞</span> Calls</button>
+      <button class="nav-btn" data-page="people"><span>👥</span> People</button>
+      <button class="nav-btn" data-page="groups"><span>🫂</span> Groups</button>
+      <button class="nav-btn" data-page="settings"><span>⚙️</span> Settings</button>
+    </nav>
+
+    <section class="sidebar-content" id="chatSidebar">
+      <div class="search"><input id="searchInput" type="search" placeholder="Search chats or messages..."></div>
+      <div class="tabs">
+        <button class="tab active" data-filter="all">All</button>
+        <button class="tab" data-filter="unread">Unread</button>
+      </div>
+      <div class="chat-list" id="chatList"></div>
+      <button class="floating-add" id="floatingAdd" title="New chat">＋</button>
+    </section>
+    <div class="sidebar-foot">JURO Web · Local demo</div>
+  </aside>
+
+  <main class="main">
+    <section class="welcome page" id="welcomePage">
+      <div class="big-logo">JURO</div><h1>Welcome to JURO</h1>
+      <p>Your conversations, calls, status updates and contacts — all in one place.</p>
+      <button class="primary-btn" id="welcomeStart">＋ Start a conversation</button>
+    </section>
+
+    <section class="page feature-page" id="statusPage" hidden>
+      <div class="page-heading"><div><h1>Status</h1><p>Share a photo or video update.</p></div>
+        <button class="primary-btn" id="addStatusBtn">＋ Add status</button></div>
+      <div class="status-compose card">
+        <div class="status-avatar">＋</div><div><b>My status</b><p>Tap “Add status” to share a photo or video.</p></div>
+      </div>
+      <h2 class="section-title">Recent updates</h2><div id="statusList" class="status-list"></div>
+      <input type="file" id="statusFile" accept="image/*,video/*" hidden>
+      <p class="settings-note">Video status limit: 2 minutes. Add a caption before posting.</p>
+    </section>
+
+    <section class="page feature-page" id="callsPage" hidden>
+      <div class="page-heading"><div><h1>Calls</h1><p>Your recent audio and video call activity.</p></div></div>
+      <div class="call-actions">
+        <button class="call-tile" id="startAudio"><span>📞</span><b>Audio call</b><small>Start a demo audio call</small></button>
+        <button class="call-tile" id="startVideo"><span>🎥</span><b>Video call</b><small>Start a demo video call</small></button>
+      </div>
+      <h2 class="section-title">Recent calls</h2><div id="callList" class="call-list"></div>
+    </section>
+
+    <section class="page feature-page" id="peoplePage" hidden>
+      <div class="page-heading"><div><h1>People</h1><p>Your JURO contacts.</p></div><button class="primary-btn" id="addPersonBtn">＋ Add person</button></div>
+      <div class="search people-search"><input id="peopleSearch" type="search" placeholder="Find a person..."></div>
+      <div id="peopleList" class="people-list"></div>
+    </section>
+
+    <section class="page feature-page" id="groupsPage" hidden>
+      <div class="page-heading"><div><h1>Groups</h1><p>Create and manage your group conversations.</p></div><button class="primary-btn" id="createGroupPageBtn">＋ New group</button></div>
+      <div id="groupsList" class="people-list"></div>
+    </section>
+
+    <section class="page feature-page" id="settingsPage" hidden>
+      <div class="page-heading"><div><h1>Settings</h1><p>Manage your JURO experience.</p></div></div>
+      <div class="settings-card card">
+        <div class="setting-row"><div><b>Profile name</b><p id="profileNameLabel">JURO User</p></div><button class="secondary-btn" id="editProfile">Edit</button></div>
+        <div class="setting-row"><div><b>Dark theme</b><p>Switch between light and dark appearance.</p></div><label class="switch"><input type="checkbox" id="darkToggle"><span></span></label></div>
+        <div class="setting-row"><div><b>Desktop notifications</b><p>Allow browser notifications (if supported).</p></div><button class="secondary-btn" id="notificationBtn">Enable</button></div>
+        <div class="setting-row"><div><b>Screen recording</b><p>Record a screen or window after browser permission.</p></div><button class="secondary-btn" id="recordScreenBtn">Start recording</button></div>
+        <div id="recordingPanel" class="recording-panel" hidden><span id="recordingState">Recording…</span><button class="secondary-btn" id="stopRecordingBtn">Stop & save</button></div>
+        <div class="setting-row"><div><b>Storage</b><p>Chats and settings are saved on this browser.</p></div><button class="secondary-btn danger-text" id="clearData">Clear demo data</button></div>
+        <p class="settings-note">Privacy note: this demo stores data locally in your browser. It does not send messages to other devices.</p>
+      </div>
+    </section>
+
+    <section class="chat-view" id="chatView" hidden>
+      <header class="chat-header">
+        <button class="icon-btn back-btn" id="backChats" aria-label="Back">‹</button>
+        <div class="avatar" id="activeAvatar">J</div>
+        <div class="user-details"><h2 id="activeName">Contact</h2><small id="activePhone">JURO conversation</small></div>
+        <button class="icon-btn" id="audioCallBtn" title="Audio call">📞</button>
+        <button class="icon-btn" id="videoCallBtn" title="Video call">🎥</button>
+        <button class="icon-btn" id="profileViewBtn" title="View profile">👤</button>
+        <button class="icon-btn danger-text" id="deleteChatBtn" title="Delete chat">🗑️</button>
+      </header>
+      <div class="messages" id="messages"></div>
+      <form class="composer" id="messageForm">
+        <div class="emoji-wrap"><button class="icon-btn" id="emojiToggle" type="button" title="Emoji">☺</button><div class="emoji-picker" id="emojiPicker" hidden></div></div>
+        <button class="icon-btn" id="attachFileBtn" type="button" title="Attach file">📎</button>
+        <input type="file" id="chatFile" hidden>
+        <input id="messageInput" placeholder="Type a message..." autocomplete="off" maxlength="4000">
+        <button class="send-btn" type="submit" title="Send">➤</button>
+      </form>
+    </section>
+  </main>
+</div>
+
+<div class="modal-bg" id="modalBg" hidden>
+  <form class="modal" id="contactForm">
+    <button class="modal-x" type="button" id="closeModal">×</button><h2 id="modalTitle">New conversation</h2>
+    <label for="personName">Name</label><input id="personName" maxlength="60" required placeholder="Contact name">
+    <label for="personPhone">Phone (optional)</label><input id="personPhone" maxlength="30" placeholder="+92...">
+    <p class="error" id="modalError"></p>
+    <div class="modal-actions"><button class="secondary-btn" type="button" id="cancelModal">Cancel</button><button class="primary-btn" type="submit">Save contact</button></div>
+  </form>
+</div>
+
+<div class="modal-bg" id="profileModal" hidden>
+  <div class="modal"><button class="modal-x" type="button" id="closeProfile">×</button><div class="call-avatar" id="profileAvatar">J</div><h2 id="profileViewName">JURO User</h2><p id="profileViewPhone">JURO profile</p><p class="settings-note">Profile details shown here are local demo information.</p></div>
+</div>
+<div class="modal-bg" id="callModal" hidden>
+  <div class="modal call-modal"><button class="modal-x" type="button" id="endCallTop">×</button>
+    <div class="call-avatar" id="callAvatar">J</div><h2 id="callName">Contact</h2><p id="callType">Audio call demo</p>
+    <div class="call-screen" id="callScreen" hidden>🎥<br><small>Video call preview</small></div>
+    <p class="call-warning">Demo only — no real call is connected. Live group calls need a calling server.</p>
+    <button class="end-call" id="endCall">End call</button>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+</body>
+</html>
