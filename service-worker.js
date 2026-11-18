@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_NAME = "juro-shell-v11";
+const CACHE_NAME = "juro-shell-v12";
 const APP_SHELL = [
   "./",
   "./index.html",
