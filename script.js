@@ -370,6 +370,7 @@ function setAuthFeedback(message,isError=false){
 }
 function authErrorMessage(error,action){
  const status=Number(error?.status||error?.context?.status||0);
+ if(/unsupported phone provider/i.test(error?.message||""))return "Supabase has no SMS provider configured for phone sign-in. In your Supabase Dashboard, enable Phone sign-in and configure an SMS provider under Authentication → Providers → Phone.";
  if(status===522)return "Supabase timed out (HTTP 522) while "+action+". Check your project status and try again later.";
  if(status)return(error?.message||"Supabase request failed.")+" (HTTP "+status+").";
  return error?.message||"Could not "+action+". Check your connection and try again.";
