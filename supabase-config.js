@@ -1,4 +1,4 @@
 window.JURO_SUPABASE_CONFIG = {
-  url: "",
+  url: "https://grkairogxwvhzcenezeg.supabase.co",
   anonKey: ""
 };

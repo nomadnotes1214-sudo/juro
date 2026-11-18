@@ -437,7 +437,10 @@ function setupOnlineMode(){
   $("#app").hidden=true;$("#authGate").hidden=false;
   const warning=$("#authConfigWarning");
   warning.hidden=false;
-  warning.textContent="Phone sign-in is not configured yet. Add your Supabase project URL and public anon key to supabase-config.js to enable SMS verification.";
+  const missingSettings=[];
+  if(!supabaseConfig.url)missingSettings.push("project URL");
+  if(!supabaseConfig.anonKey)missingSettings.push("public anon key");
+  warning.textContent="Phone sign-in is not configured yet. Add your Supabase "+missingSettings.join(" and ")+" to supabase-config.js to enable SMS verification.";
   $("#sendOtpBtn").disabled=true;
   $("#demoModeBtn").hidden=false;
   $("#demoModeBtn").onclick=()=>{$("#authGate").hidden=true;$("#app").hidden=false};
