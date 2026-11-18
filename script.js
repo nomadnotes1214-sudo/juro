@@ -191,7 +191,7 @@ async function saveContact(e){
  e.preventDefault();const name=$("#personName").value.trim(),phone=$("#personPhone").value.trim();
  if(onlineMode){
   const normalizedPhone=normalizePhone(phone);
-  if(!validPhone(normalizedPhone)){$("#modalError").textContent="Enter a phone number in international format, for example +15551234567.";return}
+  if(!validPhone(normalizedPhone)){$("#modalError").textContent="Enter a phone number in international format, for example +923112345678.";return}
   if(!supabaseClient||!currentUser){$("#modalError").textContent="Sign in before starting a chat.";return}
   let result;
   try{result=await supabaseClient.rpc("create_direct_chat",{p_phone:normalizedPhone})}
@@ -224,7 +224,7 @@ async function createGroup(){
   const raw=prompt("Enter member phone numbers in international format, separated by commas:");
   if(raw===null)return;
   const phones=raw.split(/[,\n]+/).map(normalizePhone).filter(Boolean);
-  if(!phones.length||phones.some(phone=>!validPhone(phone))){toast("Enter valid international phone numbers, for example +15551234567.");return}
+  if(!phones.length||phones.some(phone=>!validPhone(phone))){toast("Enter valid international phone numbers, for example +923112345678.");return}
   if(!supabaseClient){toast("Supabase is not configured.");return}
   let result;
   try{result=await supabaseClient.rpc("create_group_chat",{p_title:name.trim().slice(0,60),p_phones:phones})}
@@ -390,7 +390,7 @@ async function requestPhoneOtp(event,isResend=false){
  if(!isResend){
   pendingPhone=normalizePhone($("#authPhone").value);
   pendingDisplayName=$("#authDisplayName").value.trim().slice(0,60);
-  if(!validPhone(pendingPhone)){setAuthFeedback("Enter your number with country code, for example +15551234567.",true);return}
+  if(!validPhone(pendingPhone)){setAuthFeedback("Enter your number with country code, for example +923112345678.",true);return}
  }
  const button=isResend?$("#resendOtpBtn"):$("#sendOtpBtn");
  button.disabled=true;setAuthFeedback("Sending your verification code…");
