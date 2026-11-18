@@ -368,6 +368,12 @@ let pendingPhone="",pendingDisplayName="",resendTimer=null,activeOnlineUserId=nu
 function setAuthFeedback(message,isError=false){
  const feedback=$("#authFeedback");feedback.textContent=message;feedback.classList.toggle("error",isError);
 }
+function authErrorMessage(error,action){
+ const status=Number(error?.status||error?.context?.status||0);
+ if(status===522)return "Supabase timed out (HTTP 522) while "+action+". Check your project status and try again later.";
+ if(status)return(error?.message||"Supabase request failed.")+" (HTTP "+status+").";
+ return error?.message||"Could not "+action+". Check your connection and try again.";
+}
 function startResendCooldown(){
  const button=$("#resendOtpBtn");let seconds=30;
  if(resendTimer)clearInterval(resendTimer);
@@ -392,7 +398,7 @@ async function requestPhoneOtp(event,isResend=false){
   const options={};
   if(pendingDisplayName)options.data={display_name:pendingDisplayName};
   const {error}=await supabaseClient.auth.signInWithOtp({phone:pendingPhone,options});
-  if(error){setAuthFeedback(error.message,true);return}
+  if(error){console.error("Could not send JURO verification code.",error);setAuthFeedback(authErrorMessage(error,"sending the verification code"),true);return}
   if(!isResend){
    $("#phoneAuthForm").hidden=true;$("#verifyOtpForm").hidden=false;
    $("#otpDestination").textContent="Enter the code sent to "+pendingPhone+".";
@@ -402,7 +408,7 @@ async function requestPhoneOtp(event,isResend=false){
   startResendCooldown();
  }catch(error){
   console.error("Could not send JURO verification code.",error);
-  setAuthFeedback("Could not send a code. Check your connection and try again.",true);
+  setAuthFeedback(authErrorMessage(error,"sending the verification code"),true);
  }finally{
   if(!isResend)button.disabled=false;
   else if(!resendTimer)button.disabled=false;
@@ -466,11 +472,11 @@ function setupOnlineMode(){
   const button=$("#verifyOtpBtn");button.disabled=true;setAuthFeedback("Verifying code…");
   try{
    const {data,error}=await supabaseClient.auth.verifyOtp({phone:pendingPhone,token,type:"sms"});
-   if(error){setAuthFeedback(error.message,true);return}
+   if(error){console.error("Could not verify JURO code.",error);setAuthFeedback(authErrorMessage(error,"verifying the code"),true);return}
    $("#authOtp").value="";setAuthFeedback("");await handleOnlineSession(data.session);
   }catch(error){
    console.error("Could not verify JURO code.",error);
-   setAuthFeedback("Could not verify the code. Check your connection and try again.",true);
+   setAuthFeedback(authErrorMessage(error,"verifying the code"),true);
   }finally{button.disabled=false}
  };
  $("#changePhoneBtn").onclick=()=>{
