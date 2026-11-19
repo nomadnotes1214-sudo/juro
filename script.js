@@ -5,7 +5,7 @@ const $=s=>document.querySelector(s);
 const EMOJIS=["😀","😂","🥰","😍","😎","😭","😮","😡","👍","👎","❤️","🔥","🎉","🙏","👏","💯","🤔","✨"];
 const REACTIONS=["❤️","😂","👍","😮","😢","🔥"];
 const supabaseConfig=window.JURO_SUPABASE_CONFIG||{};
-const onlineMode=Boolean(supabaseConfig.url&&supabaseConfig.anonKey);
+let onlineMode=Boolean(supabaseConfig.url&&supabaseConfig.anonKey),localDemoMode=false;
 let supabaseClient=null,supabaseInitError=null,currentUser=null,activeMessagesChannel=null,activeChatListChannel=null;
 if(onlineMode){
  try{
@@ -20,13 +20,23 @@ const seed=()=>[
 {id:makeId(),name:"Basit Ali",phone:"",unread:0,messages:[{id:makeId(),text:"Hello! Welcome to JURO 😊",sent:false,time:now()-3600000,reactions:[]}]},
 {id:makeId(),name:"Noor",phone:"",unread:0,messages:[{id:makeId(),text:"How are you?",sent:false,time:now()-86400000,reactions:[]}]}];
 let data;
-if(!onlineMode){try{data=JSON.parse(localStorage.getItem(KEY)||"null")}catch{data=null}}
-if(onlineMode)data={chats:[],statuses:[],calls:[],groups:[],profile:"JURO User",dark:false};
-else if(!data||!Array.isArray(data.chats))data={chats:seed(),statuses:[],calls:[],profile:"JURO User",dark:false};
-data.statuses=data.statuses||[];data.calls=data.calls||[];data.groups=data.groups||[];data.profile=data.profile||"JURO User";
-data.chats.forEach(chat=>chat.messages.forEach(message=>{
- if(Array.isArray(message.reactions)&&message.reactions.length>1)message.reactions=[message.reactions[message.reactions.length-1]];
-}));
+function loadDemoData(){
+ let demoData;
+ try{demoData=JSON.parse(localStorage.getItem(KEY)||"null")}catch{demoData=null}
+ if(!demoData||!Array.isArray(demoData.chats))demoData={chats:seed(),statuses:[],calls:[],groups:[],profile:"JURO User",dark:false};
+ demoData.statuses=Array.isArray(demoData.statuses)?demoData.statuses:[];
+ demoData.calls=Array.isArray(demoData.calls)?demoData.calls:[];
+ demoData.groups=Array.isArray(demoData.groups)?demoData.groups:[];
+ demoData.profile=demoData.profile||"JURO User";
+ demoData.chats.forEach(chat=>{
+  if(!Array.isArray(chat.messages))chat.messages=[];
+  chat.messages.forEach(message=>{
+   if(Array.isArray(message.reactions)&&message.reactions.length>1)message.reactions=[message.reactions[message.reactions.length-1]];
+  });
+ });
+ return demoData;
+}
+data=onlineMode?{chats:[],statuses:[],calls:[],groups:[],profile:"JURO User",dark:false}:loadDemoData();
 let recording=null, recordingChunks=[],installPrompt=null;
 let activeId=null,filter="all",contactMode="chat",toastTimer;
 const save=()=>{if(onlineMode)return true;try{localStorage.setItem(KEY,JSON.stringify(data));return true}catch{toast("Browser storage is full; changes may not be saved.");return false}};
@@ -46,13 +56,14 @@ function appendRemoteMessage(row){
  if(activeId===row.chat_id)renderMessages();renderChats();
 }
 async function loadRemoteMessages(chatId){
- if(!supabaseClient||!currentUser)return;
+ if(localDemoMode||!supabaseClient||!currentUser)return;
  try{
   const chat=data.chats.find(item=>item.id===chatId);if(!chat)return;
   chat.messages=[];
   const {data:rows,error}=await supabaseClient.from("messages")
    .select("id,chat_id,sender_id,body,created_at")
    .eq("chat_id",chatId).order("created_at",{ascending:true}).limit(500);
+  if(localDemoMode)return;
   if(error){
    toast("Could not load messages: "+error.message);
    if(activeId===chatId){const area=$("#messages");area.replaceChildren();const notice=document.createElement("div");notice.className="empty";notice.textContent="Could not load messages. Check your connection and reopen this chat.";area.append(notice)}
@@ -70,20 +81,23 @@ async function loadRemoteMessages(chatId){
  }
 }
 async function loadRemoteChats(){
- if(!supabaseClient||!currentUser)return;
+ if(localDemoMode||!supabaseClient||!currentUser)return;
  try{
   const previousMessages=new Map(data.chats.map(chat=>[chat.id,chat.messages]));
   const {data:memberships,error:membershipError}=await supabaseClient.from("chat_members").select("chat_id").eq("user_id",currentUser.id);
+  if(localDemoMode)return;
   if(membershipError){toast("Could not load your chats: "+membershipError.message);return}
   const ids=(memberships||[]).map(item=>item.chat_id);
   if(!ids.length){data.chats=[];renderChats();renderPeople();renderGroups();return}
   const {data:chats,error:chatError}=await supabaseClient.from("chats")
    .select("id,is_group,title,created_at,chat_members(user_id,profiles(id,phone,display_name))")
    .in("id",ids).order("created_at",{ascending:false});
+  if(localDemoMode)return;
   if(chatError){toast("Could not load your chats: "+chatError.message);return}
   const {data:recent,error:messageError}=await supabaseClient.from("messages")
    .select("id,chat_id,sender_id,body,created_at")
    .in("chat_id",ids).order("created_at",{ascending:false}).limit(500);
+  if(localDemoMode)return;
   if(messageError){toast("Could not load recent messages: "+messageError.message);return}
   const lastByChat=new Map();
   (recent||[]).forEach(message=>{if(!lastByChat.has(message.chat_id))lastByChat.set(message.chat_id,message)});
@@ -399,6 +413,7 @@ async function requestPhoneOtp(event,isResend=false){
   const options={};
   if(pendingDisplayName)options.data={display_name:pendingDisplayName};
   const {error}=await supabaseClient.auth.signInWithOtp({phone:pendingPhone,options});
+  if(localDemoMode)return;
   if(error){console.error("Could not send JURO verification code.",error);setAuthFeedback(authErrorMessage(error,"sending the verification code"),true);return}
   if(!isResend){
    $("#phoneAuthForm").hidden=true;$("#verifyOtpForm").hidden=false;
@@ -416,6 +431,7 @@ async function requestPhoneOtp(event,isResend=false){
  }
 }
 async function handleOnlineSession(session){
+ if(localDemoMode)return;
  if(!session?.user){
   currentUser=null;activeOnlineUserId=null;data.chats=[];activeId=null;
   if(activeMessagesChannel&&supabaseClient){supabaseClient.removeChannel(activeMessagesChannel).catch(error=>console.error("Could not close the message subscription.",error));activeMessagesChannel=null}
@@ -436,10 +452,29 @@ async function handleOnlineSession(session){
   if(result.error){console.error("Could not load JURO profile.",result.error);toast("Signed in, but your profile could not be loaded.")}
   else profile=result.data;
  }catch(error){console.error("Could not load JURO profile.",error);toast("Signed in, but your profile could not be loaded.")}
+ if(localDemoMode)return;
  data.profile=profile?.display_name||currentUser.user_metadata?.display_name||currentUser.phone||"JURO User";
- applySettings();await loadRemoteChats();subscribeToChatList();subscribeToMessages();
+ applySettings();await loadRemoteChats();if(localDemoMode)return;subscribeToChatList();subscribeToMessages();
+}
+function enterLocalDemoMode(){
+ localDemoMode=true;onlineMode=false;currentUser=null;activeOnlineUserId=null;activeId=null;
+ data=loadDemoData();
+ $("#authGate").hidden=true;$("#app").hidden=false;$("#app").classList.remove("mobile-page-open");
+ $("#phoneAuthForm").hidden=false;$("#verifyOtpForm").hidden=true;$("#authConfigWarning").hidden=true;
+ $("#sendOtpBtn").disabled=false;$("#signOutRow").hidden=true;
+ $("#demoModeBtn").hidden=true;setAuthFeedback("");
+ document.querySelectorAll('[data-page="status"],[data-page="calls"]').forEach(button=>button.hidden=false);
+ $(".main-nav").style.gridTemplateColumns="";
+ $("#startAudio").hidden=false;$("#startVideo").hidden=false;$("#audioCallBtn").hidden=false;$("#videoCallBtn").hidden=false;
+ $("#attachFileBtn").hidden=false;$("#chatFile").disabled=false;$("#clearData").closest(".setting-row").hidden=false;
+ $(".sidebar-foot").textContent="JURO · Demo saved on this device";
+ $("#welcomePage").querySelector("p").textContent="Try chats, status updates, calls and contacts. JURO saves demo data on this device; it does not send messages to other people.";
+ $("#settingsPage .settings-note").textContent="Privacy note: this demo stores data locally in your browser. It does not send messages to other devices.";
+ applySettings();renderChats();renderStatuses();renderCalls();renderPeople();renderGroups();switchPage("chats");
 }
 function setupOnlineMode(){
+ $("#demoModeBtn").hidden=false;
+ $("#demoModeBtn").onclick=enterLocalDemoMode;
  if(!onlineMode){
   $("#app").hidden=true;$("#authGate").hidden=false;
   const warning=$("#authConfigWarning");
@@ -449,8 +484,6 @@ function setupOnlineMode(){
   if(!supabaseConfig.anonKey)missingSettings.push("public anon key");
   warning.textContent="Phone sign-in is not configured yet. Add your Supabase "+missingSettings.join(" and ")+" to supabase-config.js to enable SMS verification.";
   $("#sendOtpBtn").disabled=true;
-  $("#demoModeBtn").hidden=false;
-  $("#demoModeBtn").onclick=()=>{$("#authGate").hidden=true;$("#app").hidden=false};
   return;
  }
  document.querySelectorAll('[data-page="status"],[data-page="calls"]').forEach(button=>button.hidden=true);

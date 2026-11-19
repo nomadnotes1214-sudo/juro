@@ -2,7 +2,7 @@
 
 JURO is an installable messaging PWA. Without Supabase configuration it runs as a device-local demo. With Supabase configured it supports phone OTP sign-in and real-time one-to-one/group text chats.
 
-The app opens on the phone sign-up screen. If Supabase is not configured, SMS verification is unavailable; the screen explains what is needed and offers an explicit local-demo option.
+The app opens on the phone sign-up screen and offers a local-demo option that skips OTP. Demo data stays on this device and is not shared. Phone OTP sign-in and shared chats still require Supabase and an SMS provider.
 
 ## Run locally
 
